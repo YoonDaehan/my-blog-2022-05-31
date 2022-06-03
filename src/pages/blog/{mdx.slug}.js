@@ -3,8 +3,16 @@ import { graphql } from "gatsby";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import Layout from "../../components/layout";
+import { MDXProvider } from "@mdx-js/react";
+import CodeBlock from "../../components/CodeBlock";
+
+const components = {
+  //코드 스타일링
+  code: CodeBlock,
+};
 
 const BlogPost = ({ data }) => {
+  const tags = data.mdx.frontmatter.tags;
   const image = getImage(data.mdx.frontmatter.hero_image);
   return (
     <Layout pageTitle={data.mdx.frontmatter.title}>
@@ -16,7 +24,11 @@ const BlogPost = ({ data }) => {
           {data.mdx.frontmatter.hero_image_credit_text}
         </a>
       </p>
-      <MDXRenderer>{data.mdx.body}</MDXRenderer>
+      <MDXProvider components={components}>
+        <MDXRenderer>{data.mdx.body}</MDXRenderer>
+      </MDXProvider>
+      <hr />
+      TAGS : {tags && tags.join(", ")}
     </Layout>
   );
 };
@@ -35,6 +47,7 @@ export const query = graphql`
             gatsbyImageData
           }
         }
+        tags
       }
     }
   }
